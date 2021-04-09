@@ -17,7 +17,7 @@ const secret = process.env.SECRET
 //add route to fetch from Twitch API
 
 const fetchToken = () => {
-let accessToken;
+  let accessToken;
 
   axios.post(`https://id.twitch.tv/oauth2/token?client_id=${client_id}&client_secret=${secret}&grant_type=client_credentials`)
       .then(response => {
