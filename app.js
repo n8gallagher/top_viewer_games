@@ -27,9 +27,6 @@ let accessToken;
   }
 }
 
-// let token = fetchToken()
-
-
 app.use(express.static(path.join(__dirname)));
 
 app.listen(PORT, HOST, () => {
@@ -42,18 +39,6 @@ const helix = axios.create({
   headers: {'Client-ID': client_id, 'Authorization': 'Bearer ' + fetchToken()}
 });
 
-// const kraken = axios.create({
-//   baseURL: 'https://api.twitch.tv/kraken/',
-//   headers: {'Client-ID': client_id}
-// });
-
-
-// ...
-
 helix.get('games/top').then(function (response) {
 	console.log(response);
 });
-
-// kraken.get('path/to/a/kraken/endpoint').then(function (response) {
-// 	console.log(response);
-// });
