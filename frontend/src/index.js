@@ -5,10 +5,8 @@ function getGames(path) {
   return new Promise(function (resolve, reject) {
       axios.get(path).then(
           (res) => {
-              var result = res;
               console.log('Processing Request');
-              games = result.data.data.slice(0, 10);
-              resolve(result);
+              resolve(res);
           },
               (error) => {
               reject(error);
@@ -18,7 +16,8 @@ function getGames(path) {
 }
 
 async function main() {
-  let result = await getGames('/games');
+  let res = await getGames('/games');
+  games = res.data.data.slice(0, 10);
   if (games.length) {
     let gamesList = document.querySelector('.gamesList')
     games.map((game, i) => {
@@ -30,7 +29,5 @@ async function main() {
 }
 
 document.addEventListener("DOMContentLoaded", function(event) { 
-  setTimeout(function(){
     main();
-  }, 1000)
 });
