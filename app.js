@@ -13,6 +13,8 @@ let accessTokenTimeout = 5400000;
 const client_id = process.env.CLIENT_ID.trim();
 const secret = process.env.SECRET.trim();
 
+let game_id = 516575;
+
 if (accessTokenSet) {
   console.log("already had an accessToken");
 } else {
@@ -45,7 +47,8 @@ function fetchToken() {
         accessTokenSet = true;
         console.log("You set the accessToken successfully ");
       })
-      .catch((err) => { //what is this?
+      .catch((err) => {
+        //what is this?
         console.log(err);
       });
   }).catch((err) => console.log("The request was not completed, no token ")); //compared to this?
@@ -77,6 +80,19 @@ app.use(express.static(path.join(__dirname)));
 
 app.listen(PORT, HOST, () => {
   console.log(`Top Viewer Games listening at http://localhost:${PORT}`);
+});
+
+app.get("/gameData", (req, res) => {
+  axios.get(
+    "https://api.twitch.tv/helix/streams?first=100&game_id=" +
+      game_id,
+    {
+      headers: {
+        "Client-ID": client_id,
+        Authorization: "Bearer " + accessToken,
+      },
+    }
+  );
 });
 
 // function fetchStreams(game_id, page, after, tot) {
