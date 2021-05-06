@@ -2174,16 +2174,16 @@ async function main() {
       let li = document.createElement("li");
       li.appendChild(
         document.createTextNode(
-          `#${i + 1} Title: ${game.name} | GameId: ${game.id}`
+          `#${i + 1} Title: ${game.name} | GameId: ${game.id} | `
         )
       );
       let image;
       let imageUrl = game.box_art_url.substring(
         0,
-        game.box_art_url.length - 21
+        game.box_art_url.length - 21 // get rid of the end of the box_art_url string
       );
       image = document.createElement("img");
-      image.src = imageUrl + "-150x200" + ".jpg";
+      image.src = imageUrl + "-150x200" + ".jpg"; // 150x200 pixels for each box art jpg
       image.id = game.id + i;
       li.appendChild(image);
 

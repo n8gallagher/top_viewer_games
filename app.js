@@ -83,6 +83,7 @@ app.listen(PORT, HOST, () => {
 });
 
 app.get("/gameData", (req, res) => {
+  let totalViewers = 0;
   axios.get(
     "https://api.twitch.tv/helix/streams?first=100&game_id=" +
       game_id,
@@ -91,8 +92,13 @@ app.get("/gameData", (req, res) => {
         "Client-ID": client_id,
         Authorization: "Bearer " + accessToken,
       },
-    }
-  );
+    }).then(response => {
+      let array = response.data.data
+      for(let i = 0; i < array.length - 1; i++) {
+        totalViewers = totalViewers + array[i].viewer_count;
+      }
+      console.log(`total viewers for ${array[0].game_name}: ${totalViewers}`)
+    }).catch(err => console.log(err));
 });
 
 // function fetchStreams(game_id, page, after, tot) {
