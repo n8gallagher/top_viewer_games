@@ -61,21 +61,6 @@ app.get("/games", (req, res) => {
     .catch((err) => console.log(err));
 });
 
-app.get("/token", (req, res) => {
-  axios
-    .post(
-      `https://id.twitch.tv/oauth2/token?client_id=${client_id}&client_secret=${secret}&grant_type=client_credentials`
-    )
-    .then((response) => {
-      accessToken = response.data.access_token;
-      console.log("You set the accessToken successfully");
-      res.send(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-});
-
 app.use(express.static(path.join(__dirname)));
 
 app.listen(PORT, HOST, () => {
@@ -103,10 +88,25 @@ const countViewers = async (game_id) => {
 };
 
 const populateTotalViewersInGamesList = async (gamesList) => {
-  // gamesList = gamesList.data;
   for (let i = 0; i < gamesList.length; i++) {
     let game = gamesList[i];
     game.totalViewers = await countViewers(game.id);
   }
   populatedGamesList = gamesList;
 };
+
+// testing route for retrieving a token -  the same code is included in fetchToken ^
+// app.get("/token", (req, res) => {
+//   axios
+//     .post(
+//       `https://id.twitch.tv/oauth2/token?client_id=${client_id}&client_secret=${secret}&grant_type=client_credentials`
+//     )
+//     .then((response) => {
+//       accessToken = response.data.access_token;
+//       console.log("You set the accessToken successfully");
+//       res.send(response.data);
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
+// });
