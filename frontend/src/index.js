@@ -17,14 +17,14 @@ function getGames(path) {
 
 async function main() {
   let res = await getGames("/games");
-  games = res.data.data.slice(0, 10);
+  games = res.data.slice(0, 10);
   if (games.length) {
     let gamesList = document.querySelector(".gamesList");
     games.map((game, i) => {
       let li = document.createElement("li");
       li.appendChild(
         document.createTextNode(
-          `#${i + 1} Title: ${game.name} | GameId: ${game.id} | `
+          `#${i + 1} Title: ${game.name} | GameId: ${game.id} | Total Current Viewers: ${game.totalViewers} | Box Art: `
         )
       );
       let image;
