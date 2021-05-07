@@ -67,7 +67,6 @@ async function main() {
       li.appendChild(image);
 
       gamesList.append(li);
-      console.log(games);
       render(games);
     });
   }
