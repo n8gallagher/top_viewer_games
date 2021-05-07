@@ -33446,22 +33446,61 @@ const axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 let games;
 
 const svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('svg')
-svg.style('background-color', 'green')
+svg.style('background-color', '#1c1c1f')
 const width = +svg.attr("width");
 const height = +svg.attr("height");
 
-//console.log(xScale.domain)
 const render = (data) => {
   const xValue = d => d.totalViewers;
   const yValue = d => d.name;
+  const margin = { top: 40, right: 40, bottom: 80, left: 210 }
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
   const xScale = Object(d3__WEBPACK_IMPORTED_MODULE_0__["scaleLinear"])()
     .domain([0, Object(d3__WEBPACK_IMPORTED_MODULE_0__["max"])(games, xValue)])
-    .range([0, width]);
+    .range([0, innerWidth]);
+
+    
   const yScale = Object(d3__WEBPACK_IMPORTED_MODULE_0__["scaleBand"])()
     .domain(data.map(yValue))
-    .range([0, height]);
+    .range([0, innerHeight])
+    .padding(0.1);
 
-  svg
+  const g =  svg.append('g')
+    .attr('transform', `translate(${margin.left}, ${margin.top})`)
+
+  const xAxis = Object(d3__WEBPACK_IMPORTED_MODULE_0__["axisBottom"])(xScale)
+    .tickFormat(Object(d3__WEBPACK_IMPORTED_MODULE_0__["format"])('.3s'))
+
+  g.append('g')
+    .call(Object(d3__WEBPACK_IMPORTED_MODULE_0__["axisLeft"])(yScale))
+    .selectAll('.domain, .tick line')
+      .remove();
+
+  const xAxisG = g.append('g').call(xAxis)
+  .attr('transform', `translate(0, ${innerHeight})`)
+
+  xAxisG
+  .select('.domain')
+    .remove();
+
+  xAxisG
+    .selectAll('.tick line')
+      .attr('color', 'rgb(233, 233, 233)');
+
+  xAxisG.append('text')
+    .attr('y', 60)
+    .attr('x', innerWidth / 2)
+    .attr('fill', 'rgb(233, 233, 233)')
+    .text('Current Viewers ')
+
+  g.append('text')
+    .attr('y', -5)
+    .attr('fill', 'rgb(233, 233, 233)')
+      .text('Top 10 Games by Viewership')
+
+  g
     .selectAll("rect")
     .data(data)
     .enter().append("rect")
@@ -33509,7 +33548,6 @@ async function main() {
       li.appendChild(image);
 
       gamesList.append(li);
-      console.log(games);
       render(games);
     });
   }

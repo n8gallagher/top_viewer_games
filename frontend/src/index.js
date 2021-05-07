@@ -1,25 +1,73 @@
 const axios = require("axios");
-import { select, scaleLinear, max, scaleBand } from "d3";
+import { 
+  select, 
+  scaleLinear, 
+  max, 
+  scaleBand, 
+  axisLeft, 
+  axisBottom, 
+  format 
+} 
+  from "d3";
 
 let games;
 
 const svg = select('svg')
-svg.style('background-color', 'green')
+svg.style('background-color', '#1c1c1f')
 const width = +svg.attr("width");
 const height = +svg.attr("height");
 
-//console.log(xScale.domain)
 const render = (data) => {
   const xValue = d => d.totalViewers;
   const yValue = d => d.name;
+  const margin = { top: 40, right: 40, bottom: 60, left: 225 }
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
   const xScale = scaleLinear()
     .domain([0, max(games, xValue)])
-    .range([0, width]);
+    .range([0, innerWidth]);
+
+    
   const yScale = scaleBand()
     .domain(data.map(yValue))
-    .range([0, height]);
+    .range([0, innerHeight])
+    .padding(0.1);
 
-  svg
+  const g =  svg.append('g')
+    .attr('transform', `translate(${margin.left}, ${margin.top})`)
+
+  const xAxis = axisBottom(xScale)
+    .tickFormat(format('.3s'))
+
+  g.append('g')
+    .call(axisLeft(yScale))
+    .selectAll('.domain, .tick line')
+      .remove();
+
+  const xAxisG = g.append('g').call(xAxis)
+  .attr('transform', `translate(0, ${innerHeight})`)
+
+  xAxisG
+  .select('.domain')
+    .remove();
+
+  xAxisG
+    .selectAll('.tick line')
+      .attr('color', 'rgb(233, 233, 233)');
+
+  xAxisG.append('text')
+    .attr('y', 60)
+    .attr('x', innerWidth / 2)
+    .attr('fill', 'rgb(233, 233, 233)')
+    .text('Current Viewers (approximate)')
+
+  g.append('text')
+    .attr('y', -5)
+    .attr('fill', 'rgb(233, 233, 233)')
+      .text('Top 10 Games by Viewership')
+
+  g
     .selectAll("rect")
     .data(data)
     .enter().append("rect")

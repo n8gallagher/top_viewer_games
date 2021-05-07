@@ -1,0 +1,10 @@
+rect {
+  fill: rgb(190, 170, 255);
+}
+
+text {
+  font-size: 1.6em;
+  color: rgb(233, 233, 233);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: 400;
+}
