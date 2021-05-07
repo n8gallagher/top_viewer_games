@@ -47,7 +47,6 @@ function fetchToken() {
         console.log("You set the accessToken successfully ");
       })
       .catch((err) => {
-        //what is this?
         console.log(err);
       });
   }).catch((err) => console.log("The request was not completed, no token "));

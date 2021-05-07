@@ -1,5 +1,32 @@
 const axios = require("axios");
+import { select, scaleLinear, max, scaleBand } from "d3";
+
 let games;
+
+const svg = select('svg')
+svg.style('background-color', 'green')
+const width = +svg.attr("width");
+const height = +svg.attr("height");
+
+//console.log(xScale.domain)
+const render = (data) => {
+  const xValue = d => d.totalViewers;
+  const yValue = d => d.name;
+  const xScale = scaleLinear()
+    .domain([0, max(games, xValue)])
+    .range([0, width]);
+  const yScale = scaleBand()
+    .domain(data.map(yValue))
+    .range([0, height]);
+
+  svg
+    .selectAll("rect")
+    .data(data)
+    .enter().append("rect")
+      .attr('y', d => yScale(yValue(d)))
+      .attr("width", (d) => xScale(xValue(d)))
+      .attr("height", yScale.bandwidth());
+};
 
 function getGames(path) {
   return new Promise(function (resolve, reject) {
@@ -24,7 +51,9 @@ async function main() {
       let li = document.createElement("li");
       li.appendChild(
         document.createTextNode(
-          `#${i + 1} Title: ${game.name} | GameId: ${game.id} | Total Current Viewers: ${game.totalViewers} | Box Art: `
+          `#${i + 1} Title: ${game.name} | GameId: ${
+            game.id
+          } | Total Current Viewers: ${game.totalViewers} | Box Art: `
         )
       );
       let image;
@@ -38,10 +67,13 @@ async function main() {
       li.appendChild(image);
 
       gamesList.append(li);
+      console.log(games);
+      render(games);
     });
   }
 }
 
 document.addEventListener("DOMContentLoaded", function (event) {
   main();
+  
 });
