@@ -33446,14 +33446,14 @@ const axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 let games;
 
 const svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('svg')
-svg.style('background-color', '#1c1c1f')
+svg.style('background-color', 'black')
 const width = +svg.attr("width");
 const height = +svg.attr("height");
 
 const render = (data) => {
   const xValue = d => d.totalViewers;
   const yValue = d => d.name;
-  const margin = { top: 40, right: 40, bottom: 80, left: 210 }
+  const margin = { top: 40, right: 40, bottom: 60, left: 225 }
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -33490,15 +33490,16 @@ const render = (data) => {
       .attr('color', 'rgb(233, 233, 233)');
 
   xAxisG.append('text')
-    .attr('y', 60)
+    .attr('y', 48)
     .attr('x', innerWidth / 2)
-    .attr('fill', 'rgb(233, 233, 233)')
-    .text('Current Viewers ')
+    .attr('class', 'axis-label')
+    .text('Current Viewers (approximate)')
 
   g.append('text')
     .attr('y', -5)
-    .attr('fill', 'rgb(233, 233, 233)')
-      .text('Top 10 Games by Viewership')
+    .attr('x', (innerWidth / 2) - margin.left - margin.right)
+    .attr('class', 'main-label')
+    .text('Top 10 Games by Viewership')
 
   g
     .selectAll("rect")
@@ -33527,29 +33528,28 @@ async function main() {
   let res = await getGames("/games");
   games = res.data.slice(0, 10);
   if (games.length) {
-    let gamesList = document.querySelector(".gamesList");
-    games.map((game, i) => {
-      let li = document.createElement("li");
-      li.appendChild(
-        document.createTextNode(
-          `#${i + 1} Title: ${game.name} | GameId: ${
-            game.id
-          } | Total Current Viewers: ${game.totalViewers} | Box Art: `
-        )
-      );
-      let image;
-      let imageUrl = game.box_art_url.substring(
-        0,
-        game.box_art_url.length - 21 // get rid of the end of the box_art_url string
-      );
-      image = document.createElement("img");
-      image.src = imageUrl + "-150x200" + ".jpg"; // 150x200 pixels for each box art jpg
-      image.id = game.id + i;
-      li.appendChild(image);
+    // let gamesList = document.querySelector(".gamesList");
+    // games.map((game, i) => {
+    //   let li = document.createElement("li");
+    //   li.appendChild(
+    //     document.createTextNode(
+    //       `#${i + 1} Title: ${game.name} | GameId: ${
+    //         game.id
+    //       } | Total Current Viewers: ${game.totalViewers} | Box Art: `
+    //     )
+    //   );
+    //   let image;
+    //   let imageUrl = game.box_art_url.substring(
+    //     0,
+    //     game.box_art_url.length - 21 // get rid of the end of the box_art_url string
+    //   );
+    //   image = document.createElement("img");
+    //   image.src = imageUrl + "-150x200" + ".jpg"; // 150x200 pixels for each box art jpg
+    //   image.id = game.id + i;
+    //   li.appendChild(image);
 
-      gamesList.append(li);
+    //   gamesList.append(li);
       render(games);
-    });
   }
 }
 

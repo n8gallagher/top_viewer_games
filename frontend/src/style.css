@@ -4,7 +4,17 @@ rect {
 
 text {
   font-size: 1.6em;
-  color: rgb(233, 233, 233);
+  color: rgb(170, 170, 170);
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-weight: 400;
+}
+
+.axis-label {
+  font-size: 2.5em;
+  fill:rgb(233, 233, 233);
+}
+
+.main-label {
+  font-size: 2.7em;
+  fill:rgb(233, 233, 233);
 }
