@@ -1,6 +1,7 @@
 const axios = require("axios");
 const express = require("express");
 const app = express();
+require('dotenv').config()
 
 const path = require("path"); //???
 const PORT = process.env.PORT || 3000;
@@ -11,6 +12,7 @@ let populatedGamesList;
 let accessToken = "dummy";
 let accessTokenSet = false;
 let accessTokenTimeout = 5400000;
+let cached_json = null;
 const client_id = process.env.CLIENT_ID.trim();
 const secret = process.env.SECRET.trim();
 
@@ -26,6 +28,20 @@ if (accessTokenSet) {
   }, accessTokenTimeout);
 }
 
+function setCache() {
+  console.log('resetting cache!')
+  helix
+    .get("games/top")
+    .then((response) => populateTotalViewersInGamesList(response.data.data))
+    .then((response) => {
+      cached_json = populatedGamesList;
+    })
+    .catch((err) => console.log(err));
+}
+
+setInterval( () => {setCache()}, 1000 * 60 * 10) // get new data 
+                                                // for the cache every 
+                                                // 10 minutes
 app.use("/", express.static("frontend"));
 
 function fetchToken() {
@@ -53,6 +69,9 @@ function fetchToken() {
 }
 
 app.get("/games", (req, res) => {
+  if (cached_json !== null){
+    return res.json(cached_json)
+  }
   helix
     .get("games/top")
     .then((response) => populateTotalViewersInGamesList(response.data.data))
