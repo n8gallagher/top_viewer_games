@@ -1,3 +1,7 @@
+// caching 
+// server calls api every 10 mins without interaction
+// on page refresh send cached version
+
 const axios = require("axios");
 import { 
   select, 
@@ -68,8 +72,7 @@ const render = (data) => {
     .attr('class', 'main-label')
     .text('Top 10 Games by Viewership')
 
-  g
-    .selectAll("rect")
+  g.selectAll("rect")
     .data(data)
     .enter().append("rect")
       .attr('y', d => yScale(yValue(d)))
@@ -89,6 +92,10 @@ function getGames(path) {
       }
     );
   });
+}
+
+function update() {
+  main();
 }
 
 async function main() {

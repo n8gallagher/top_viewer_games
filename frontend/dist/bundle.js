@@ -33501,8 +33501,7 @@ const render = (data) => {
     .attr('class', 'main-label')
     .text('Top 10 Games by Viewership')
 
-  g
-    .selectAll("rect")
+  g.selectAll("rect")
     .data(data)
     .enter().append("rect")
       .attr('y', d => yScale(yValue(d)))
@@ -33522,6 +33521,10 @@ function getGames(path) {
       }
     );
   });
+}
+
+function update() {
+  main();
 }
 
 async function main() {
