@@ -59,6 +59,7 @@ function fetchToken() {
             Authorization: "Bearer " + accessToken,
           },
         });
+        setCache();
         accessTokenSet = true;
         console.log("You set the accessToken successfully ");
       })
