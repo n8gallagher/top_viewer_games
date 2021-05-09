@@ -2,7 +2,7 @@
   "name": "top-viewer-games",
   "version": "1.0.0",
   "description": "Twitch Data Visualization",
-  "main": "app.js",
+  "main": "./app.js",
   "directories": {
     "test": "test"
   },
