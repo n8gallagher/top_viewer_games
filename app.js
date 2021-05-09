@@ -69,6 +69,10 @@ function fetchToken() {
   }).catch((err) => console.log("The request was not completed, no token "));
 }
 
+app.get("/setCache", () => {
+  setCache();
+})
+
 app.get("/games", (req, res) => {
   if (cached_json !== null){
     return res.json(cached_json)

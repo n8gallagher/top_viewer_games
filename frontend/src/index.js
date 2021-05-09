@@ -94,7 +94,8 @@ function getGames(path) {
   });
 }
 
-function update() {
+async function update() {
+  await axios.get('/setCache');
   main();
 }
 
@@ -124,6 +125,8 @@ async function main() {
 
     //   gamesList.append(li);
       render(games);
+      let updateButton = document.getElementById('update')
+      updateButton.addEventListener('click', update)
   }
 }
 
