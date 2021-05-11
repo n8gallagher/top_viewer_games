@@ -1,6 +1,3 @@
-// caching 
-// server calls api every 10 mins without interaction
-// on page refresh send cached version
 
 const axios = require("axios");
 import { 
@@ -127,6 +124,9 @@ async function main() {
       render(games);
       let updateButton = document.getElementById('update')
       updateButton.addEventListener('click', update)
+      let spinner = document.querySelector("#hide-spinner");
+      spinner.style.display = "none";
+
   }
 }
 

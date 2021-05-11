@@ -33440,9 +33440,6 @@ process.umask = function() { return 0; };
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
-// caching 
-// server calls api every 10 mins without interaction
-// on page refresh send cached version
 
 const axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 
@@ -33560,6 +33557,9 @@ async function main() {
       render(games);
       let updateButton = document.getElementById('update')
       updateButton.addEventListener('click', update)
+      let spinner = document.querySelector("#hide-spinner");
+      spinner.style.display = "none";
+
   }
 }
 

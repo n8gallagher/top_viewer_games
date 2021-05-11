@@ -9,9 +9,13 @@
   <title>Top 10 Games Twitch.tv</title>
 </head>
 <body>
-  <svg width="960" height="500"></svg>
+  <div class="roller-container">
+    <svg width="960" height="500">
+      <div class="lds-roller" id="hide-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    </svg>
+  </div>
+    
   <script src="./dist/bundle.js"></script>
-  <div>
     <a href="https://github.com/n8gallagher/top_viewer_games">Github repo</a>
     <p>Data automatically updates every 10 minutes click the button to manually update</p>
     <button type="button" id="update">Update</button><br><br>
