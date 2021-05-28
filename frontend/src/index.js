@@ -96,6 +96,10 @@ async function update() {
   main();
 }
 
+function blankSvg() {
+
+}
+
 async function main() {
   let res = await getGames("/games");
   games = res.data.slice(0, 10);
@@ -132,5 +136,4 @@ async function main() {
 
 document.addEventListener("DOMContentLoaded", function (event) {
   main();
-  
 });
