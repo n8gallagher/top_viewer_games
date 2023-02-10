@@ -17,7 +17,7 @@
   },
   "engines": {
     "node": "16.16.0",
-    "npm": "6.4.1"
+    "npm": "8.11.0"
   },
   "scripts": {
     "build": "webpack",
