@@ -16,7 +16,7 @@
     "webpack-cli": "^3.3.12"
   },
   "engines": {
-    "node": "10.13.0",
+    "node": "16.16.0",
     "npm": "6.4.1"
   },
   "scripts": {
