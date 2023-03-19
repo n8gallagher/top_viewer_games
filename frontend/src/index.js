@@ -71,7 +71,7 @@ const getGames = async path => {
 
 async function main() {
   const res = await getGames("/games");
-  const games = res.data.slice(0, 10);
+  const games = res.data.slice(0, 10).sort((a, b) => b.totalViewers - a.totalViewers);
   if (games.length) {
     render(games);
   }
