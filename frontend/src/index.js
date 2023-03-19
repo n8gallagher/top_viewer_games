@@ -1,30 +1,20 @@
-import {
-  select,
-  scaleLinear,
-  max,
-  scaleBand,
-  axisLeft,
-  axisBottom,
-  format,
-} from "d3";
-const axios = require("axios");
-
-let games;
+import { select, scaleLinear, max, scaleBand, axisLeft, axisBottom, format } from "d3";
+import axios from "axios";
 
 const svg = select("svg");
 svg.style("background-color", "black");
 const width = +svg.attr("width");
 const height = +svg.attr("height");
 
-const render = (data) => {
-  const xValue = (d) => d.totalViewers;
-  const yValue = (d) => d.name;
+const render = data => {
+  const xValue = d => d.totalViewers;
+  const yValue = d => d.name;
   const margin = { top: 40, right: 40, bottom: 60, left: 225 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
   const xScale = scaleLinear()
-    .domain([0, max(games, xValue)])
+    .domain([0, max(data, xValue)])
     .range([0, innerWidth]);
 
   const yScale = scaleBand()
@@ -64,34 +54,27 @@ const render = (data) => {
     .data(data)
     .enter()
     .append("rect")
-    .attr("y", (d) => yScale(yValue(d)))
-    .attr("width", (d) => xScale(xValue(d)))
+    .attr("y", d => yScale(yValue(d)))
+    .attr("width", d => xScale(xValue(d)))
     .attr("height", yScale.bandwidth());
 };
 
-const getGames = (path) =>
-  new Promise((resolve, reject) => {
-    axios
-      .get(path)
-      .then(
-        (res) => {
-          console.log("Processing Request");
-          resolve(res);
-        },
-        (error) => {
-          reject(error);
-        }
-      );
-  });
+const getGames = async path => {
+  try {
+    const res = await axios.get(path);
+    console.log("Processing Request");
+    return res;
+  } catch (error) {
+    console.error("Error fetching games data:", error);
+  }
+};
 
 async function main() {
-  let res = await getGames("/games");
-  games = res.data.slice(0, 10);
+  const res = await getGames("/games");
+  const games = res.data.slice(0, 10);
   if (games.length) {
     render(games);
   }
 }
 
-document.addEventListener("DOMContentLoaded", (event) => {
-  main();
-});
+document.addEventListener("DOMContentLoaded", () => main());
