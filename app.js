@@ -133,3 +133,26 @@ const populateTotalViewersInGamesList = async (gamesList) => {
 //       console.log(error);
 //     });
 // });
+
+// Posible code for rebuild
+// import requests
+// import json
+// import matplotlib.pyplot as plt
+
+// # get top 10 games from Twitch API
+// url = 'https://api.twitch.tv/helix/games/top'
+// headers = {'Client-ID': 'YOUR_CLIENT_ID'}
+// params = {'first': 10}
+// response = requests.get(url, headers=headers, params=params)
+// data = json.loads(response.text)
+
+// # extract game names and viewership numbers
+// game_names = [game['name'] for game in data['data']]
+// viewership_numbers = [game['viewer_count'] for game in data['data']]
+
+// # create bar graph
+// plt.bar(game_names, viewership_numbers)
+// plt.xlabel('Game Name')
+// plt.ylabel('Viewership')
+// plt.title('Top 10 Games by Viewership')
+// plt.show()
