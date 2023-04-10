@@ -13,7 +13,8 @@
     "nodemon": "^2.0.20",
     "npm": "^9.4.2",
     "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "yarn": "^1.22.19"
   },
   "engines": {
     "node": "16.16.0",
