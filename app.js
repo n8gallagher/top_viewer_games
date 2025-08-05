@@ -1,11 +1,40 @@
 const axios = require("axios");
 const express = require("express");
-const app = express();
-require('dotenv').config()
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const compression = require('compression');
+const winston = require('winston');
+const path = require("path");
+require('dotenv').config();
 
-const path = require("path"); //???
+const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
+
+// Configure logger
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' })
+  ]
+});
+
+// Security middleware
+app.use(helmet());
+app.use(compression());
+
+// Rate limiting
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.'
+});
 
 let helix;
 let populatedGamesList;
@@ -81,27 +110,35 @@ app.get("/setCache", () => {
   setCache();
 })
 
-app.get("/games", (req, res) => {
-  if (cached_json !== null){
-    return res.json(cached_json)
-  }
-  
-  if (!helix) {
-    return res.status(500).json({ 
-      error: "Twitch API not initialized. Please check your credentials." 
-    });
-  }
-  
-  helix
-    .get("games/top")
-    .then((response) => populateTotalViewersInGamesList(response.data.data))
-    .then((response) => res.json(populatedGamesList))
-    .catch((err) => {
-      console.error("Error fetching games:", err);
-      res.status(500).json({ 
-        error: "Failed to fetch games data from Twitch API" 
+app.get("/games", apiLimiter, async (req, res) => {
+  try {
+    if (cached_json !== null) {
+      logger.info('Serving cached games data');
+      return res.json(cached_json);
+    }
+    
+    if (!helix) {
+      logger.error('API request attempted without initialized Twitch client');
+      return res.status(500).json({ 
+        error: "Twitch API not initialized. Please check your credentials." 
       });
+    }
+    
+    const response = await helix.get("games/top");
+    await populateTotalViewersInGamesList(response.data.data);
+    logger.info('Successfully fetched and processed games data');
+    return res.json(populatedGamesList);
+  } catch (err) {
+    logger.error('Failed to fetch games data:', {
+      error: err.message,
+      status: err.response?.status,
+      data: err.response?.data
     });
+    res.status(500).json({ 
+      error: "Failed to fetch games data from Twitch API",
+      message: err.message 
+    });
+  }
 });
 
 app.use(express.static(path.join(__dirname)));
@@ -112,22 +149,33 @@ app.listen(PORT, HOST, () => {
 
 const countViewers = async (game_id) => {
   let totalViewers = 0;
-  await axios
-    .get("https://api.twitch.tv/helix/streams?first=100&game_id=" + game_id, {
+  try {
+    const response = await axios.get("https://api.twitch.tv/helix/streams", {
+      params: {
+        first: 100,
+        game_id: game_id
+      },
       headers: {
         "Client-ID": client_id,
         Authorization: "Bearer " + accessToken,
       },
-    })
-    .then((response) => {
-      let array = response.data.data;
-      for (let i = 0; i < array.length - 1; i++) {
-        totalViewers = totalViewers + array[i].viewer_count;
-      }
-    })
-    .catch((err) => console.log(err));
+    });
 
-  return totalViewers;
+    if (response.data && Array.isArray(response.data.data)) {
+      totalViewers = response.data.data.reduce((sum, stream) => 
+        sum + (stream.viewer_count || 0), 0);
+    }
+    
+    logger.info(`Fetched viewer count for game ${game_id}: ${totalViewers} viewers`);
+    return totalViewers;
+  } catch (err) {
+    logger.error(`Error fetching viewers for game ${game_id}:`, {
+      error: err.message,
+      status: err.response?.status,
+      data: err.response?.data
+    });
+    throw new Error(`Failed to fetch viewer count for game ${game_id}`);
+  }
 };
 
 const populateTotalViewersInGamesList = async (gamesList) => {
