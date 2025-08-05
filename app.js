@@ -46,6 +46,11 @@ app.use("/", express.static("frontend"));
 
 function fetchToken() {
   return new Promise(function (resolve, reject) {
+    if (!client_id || !secret) {
+      console.error("Missing Twitch API credentials. Please check your .env file.");
+      return reject(new Error("Missing API credentials"));
+    }
+    
     axios
       .post(
         `https://id.twitch.tv/oauth2/token?client_id=${client_id}&client_secret=${secret}&grant_type=client_credentials`
@@ -61,12 +66,15 @@ function fetchToken() {
         });
         setCache();
         accessTokenSet = true;
-        console.log("You set the accessToken successfully ");
+        console.log("✅ Twitch API token set successfully");
       })
       .catch((err) => {
-        console.log(err);
+        console.error("❌ Failed to get Twitch API token:", err.response?.data || err.message);
+        reject(err);
       });
-  }).catch((err) => console.log("The request was not completed, no token "));
+  }).catch((err) => {
+    console.error("❌ Token request failed:", err.message);
+  });
 }
 
 app.get("/setCache", () => {
@@ -77,11 +85,23 @@ app.get("/games", (req, res) => {
   if (cached_json !== null){
     return res.json(cached_json)
   }
+  
+  if (!helix) {
+    return res.status(500).json({ 
+      error: "Twitch API not initialized. Please check your credentials." 
+    });
+  }
+  
   helix
     .get("games/top")
     .then((response) => populateTotalViewersInGamesList(response.data.data))
     .then((response) => res.json(populatedGamesList))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.error("Error fetching games:", err);
+      res.status(500).json({ 
+        error: "Failed to fetch games data from Twitch API" 
+      });
+    });
 });
 
 app.use(express.static(path.join(__dirname)));

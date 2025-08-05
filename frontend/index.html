@@ -6,41 +6,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/jpeg" href="./assets/favicon.PNG">
   <link rel="stylesheet" href="src/style.css">
-  <title>Top 10 Games Twitch.tv</title>
+  <title>Top 10 Games - Twitch.tv</title>
 </head>
 <body>
-  <header>
-    My Website
+  <header class="main-header">
+    <div class="header-content">
+      <h1>🎮 Top Viewer Games</h1>
+      <p>Real-time Twitch.tv data visualization</p>
+    </div>
   </header>
-  <nav>
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Contact</a>
-  </nav>
-  <main>
-    <aside>
-      Sidebar
-    </aside>
-    <article>
-      <div class="page-container">
-        <div class="content-container">
-          <div class="image-frame">
-            <div class="image-container">
-              <div class="image-caption">
-                <svg width="960" height="500">
-                  <button type="button">Click Me!</button>
-                </svg>
-                <script src="./dist/bundle.js"></script>
-                <ul class="gamesList"></ul>
-              </div>
+  
+  <main class="main-content">
+    <div class="container">
+      <div class="chart-container">
+        <div class="chart-header">
+          <h2>Top 10 Games by Viewership</h2>
+          <div class="chart-controls">
+            <div class="controls-group">
+              <label for="sort-select">Sort by:</label>
+              <select id="sort-select" class="form-select">
+                <option value="viewers">Viewers (High to Low)</option>
+                <option value="name">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+              </select>
             </div>
+            <button id="refresh-btn" class="btn btn-primary">🔄 Refresh Data</button>
+            <span id="last-updated" class="last-updated"></span>
           </div>
         </div>
+        
+        <div class="chart-wrapper">
+          <div id="loading-spinner" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading Twitch data...</p>
+          </div>
+          
+          <svg id="chart" width="960" height="500">
+            <!-- D3.js will populate this -->
+          </svg>
+          
+          <div id="error-message" class="error-message hidden">
+            <p>❌ Failed to load data. Please try again.</p>
+            <button id="retry-btn" class="btn btn-secondary">Retry</button>
+          </div>
+        </div>
+        
+        <div class="chart-footer">
+          <p class="data-info">
+            <small>Data updates every 10 minutes • Powered by Twitch API</small>
+          </p>
+        </div>
       </div>
-    </article>
+    </div>
   </main>
-  <footer>
-    &copy; 2023 My Website
+  
+  <footer class="main-footer">
+    <div class="footer-content">
+      <p>&copy; 2024 Top Viewer Games • Built with ❤️ and D3.js</p>
+    </div>
   </footer>
+  
+  <script src="./dist/bundle.js"></script>
 </body>
 </html>

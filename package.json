@@ -12,7 +12,7 @@
     "express": "^4.18.2",
     "nodemon": "^2.0.20",
     "npm": "^9.4.2",
-    "webpack": "^4.44.1",
+    "webpack": "^5.76.3",
     "webpack-cli": "^3.3.12"
   },
   "engines": {
@@ -20,8 +20,10 @@
     "npm": "8.11.0"
   },
   "scripts": {
-    "build": "webpack --mode=development",
-    "postinstall": "webpack --mode=production",
+    "setup": "node setup.js",
+    "build": "cd frontend && npm run build",
+    "build:dev": "cd frontend && npm run dev",
+    "install:all": "npm install && cd frontend && npm install",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "dev": "nodemon app.js"
