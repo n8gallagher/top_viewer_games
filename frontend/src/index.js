@@ -16,8 +16,8 @@ import {
 
 let games;
 
-const svg = select('svg')
-svg.style('background-color', 'black')
+const svg = select('#mainChart')
+svg.style('background-color', 'white')
 const width = +svg.attr("width");
 const height = +svg.attr("height");
 
@@ -28,10 +28,10 @@ const render = (data) => {
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
+  const xScale = scaleLinear()
     .domain([0, max(games, xValue)])
     .range([0, innerWidth]);
 
-    
   const yScale = scaleBand()
     .domain(data.map(yValue))
     .range([0, innerHeight])
@@ -97,36 +97,108 @@ function update() {
   main();
 }
 
-async function main() {
-  let res = await getGames("/games");
-  games = res.data.slice(0, 10);
-  if (games.length) {
-    // let gamesList = document.querySelector(".gamesList");
-    // games.map((game, i) => {
-    //   let li = document.createElement("li");
-    //   li.appendChild(
-    //     document.createTextNode(
-    //       `#${i + 1} Title: ${game.name} | GameId: ${
-    //         game.id
-    //       } | Total Current Viewers: ${game.totalViewers} | Box Art: `
-    //     )
-    //   );
-    //   let image;
-    //   let imageUrl = game.box_art_url.substring(
-    //     0,
-    //     game.box_art_url.length - 21 // get rid of the end of the box_art_url string
-    //   );
-    //   image = document.createElement("img");
-    //   image.src = imageUrl + "-150x200" + ".jpg"; // 150x200 pixels for each box art jpg
-    //   image.id = game.id + i;
-    //   li.appendChild(image);
+// UI State Management
+function showLoading() {
+  document.getElementById('loadingState').classList.remove('d-none');
+  document.getElementById('errorState').classList.add('d-none');
+  document.getElementById('chartContainer').classList.add('d-none');
+}
 
-    //   gamesList.append(li);
+function showError() {
+  document.getElementById('loadingState').classList.add('d-none');
+  document.getElementById('errorState').classList.remove('d-none');
+  document.getElementById('chartContainer').classList.add('d-none');
+}
+
+function showData() {
+  document.getElementById('loadingState').classList.add('d-none');
+  document.getElementById('errorState').classList.add('d-none');
+  document.getElementById('chartContainer').classList.remove('d-none');
+  document.getElementById('lastUpdated').textContent = 
+    `Last updated: ${new Date().toLocaleTimeString()}`;
+}
+
+function updateTotalViewers(games) {
+  const total = games.reduce((sum, game) => sum + (game.totalViewers || 0), 0);
+  document.getElementById('totalViewers').innerHTML = 
+    total.toLocaleString() + '<small class="d-block">viewers</small>';
+}
+
+function renderGamesList(games) {
+  const gamesList = document.getElementById('gamesList');
+  gamesList.innerHTML = '';
+  
+  games.forEach((game, index) => {
+    const imageUrl = game.box_art_url ? 
+      game.box_art_url.replace('{width}', '150').replace('{height}', '200') : 
+      '';
+    
+    const gameCard = document.createElement('div');
+    gameCard.className = 'col-md-6 col-lg-4 mb-3';
+    gameCard.innerHTML = `
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="row g-0 h-100">
+          <div class="col-4">
+            <img src="${imageUrl}" class="img-fluid rounded-start h-100" 
+                 style="object-fit: cover;" alt="${game.name} box art"
+                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';">
+          </div>
+          <div class="col-8">
+            <div class="card-body p-3">
+              <div class="d-flex align-items-start justify-content-between">
+                <span class="badge bg-primary">#${index + 1}</span>
+              </div>
+              <h6 class="card-title mt-2 mb-1">${game.name}</h6>
+              <div class="text-primary fw-bold">
+                <i class="fas fa-eye me-1"></i>
+                ${(game.totalViewers || 0).toLocaleString()}
+              </div>
+              <small class="text-muted">viewers</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    gamesList.appendChild(gameCard);
+  });
+}
+
+async function main() {
+  showLoading();
+  
+  try {
+    let res = await getGames("/games");
+    games = res.data.slice(0, 10);
+    
+    if (games && games.length) {
+      updateTotalViewers(games);
+      renderGamesList(games);
       render(games);
+      showData();
+    } else {
+      showError();
+    }
+  } catch (error) {
+    console.error('Error fetching games:', error);
+    showError();
   }
 }
 
 document.addEventListener("DOMContentLoaded", function (event) {
   main();
   
+  // Add refresh button functionality
+  document.getElementById('refreshBtn').addEventListener('click', function() {
+    const btn = this;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Refreshing...';
+    btn.disabled = true;
+    
+    main().finally(() => {
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }, 1000);
+    });
+  });
 });

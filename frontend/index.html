@@ -6,41 +6,140 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/jpeg" href="./assets/favicon.PNG">
   <link rel="stylesheet" href="src/style.css">
-  <title>Top 10 Games Twitch.tv</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <title>Twitch Top Games Dashboard</title>
 </head>
 <body>
-  <header>
-    My Website
-  </header>
-  <nav>
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Contact</a>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">
+        <i class="fab fa-twitch me-2"></i>
+        Twitch Games Dashboard
+      </a>
+      <div class="navbar-nav ms-auto">
+        <button id="refreshBtn" class="btn btn-outline-light">
+          <i class="fas fa-sync-alt me-1"></i>
+          Refresh Data
+        </button>
+      </div>
+    </div>
   </nav>
-  <main>
-    <aside>
-      Sidebar
-    </aside>
-    <article>
-      <div class="page-container">
-        <div class="content-container">
-          <div class="image-frame">
-            <div class="image-container">
-              <div class="image-caption">
-                <svg width="960" height="500">
-                  <button type="button">Click Me!</button>
-                </svg>
-                <script src="./dist/bundle.js"></script>
-                <ul class="gamesList"></ul>
+
+  <!-- Hero Section -->
+  <div class="hero-section bg-gradient text-white py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="display-4 fw-bold mb-3">
+            Real-Time Twitch Analytics
+          </h1>
+          <p class="lead">
+            Discover the most popular games on Twitch with live viewer counts and trends. 
+            Data updates every 10 minutes for accurate insights.
+          </p>
+        </div>
+        <div class="col-lg-4 text-center">
+          <div class="stats-card">
+            <div id="totalViewers" class="display-6 fw-bold text-warning">
+              <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div class="text-light">Total Viewers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container my-5">
+    <!-- Loading State -->
+    <div id="loadingState" class="text-center py-5">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <h5>Fetching Twitch data...</h5>
+      <p class="text-muted">Getting the latest viewer counts for top games</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="alert alert-danger d-none" role="alert">
+      <h5><i class="fas fa-exclamation-triangle me-2"></i>Error Loading Data</h5>
+      <p class="mb-0">Unable to fetch Twitch data. Please check your connection and try again.</p>
+    </div>
+
+    <!-- Chart Container -->
+    <div id="chartContainer" class="d-none">
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h4 class="card-title mb-0">
+                    <i class="fas fa-chart-bar text-primary me-2"></i>
+                    Top 10 Games by Current Viewership
+                  </h4>
+                </div>
+                <div class="col-auto">
+                  <small class="text-muted" id="lastUpdated">
+                    <i class="fas fa-clock me-1"></i>
+                    Last updated: --
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="chart-wrapper">
+                <svg id="mainChart" width="960" height="500"></svg>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </article>
-  </main>
-  <footer>
-    &copy; 2023 My Website
+
+      <!-- Games List -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+              <h5 class="card-title mb-0">
+                <i class="fas fa-list text-primary me-2"></i>
+                Game Details
+              </h5>
+            </div>
+            <div class="card-body">
+              <div id="gamesList" class="row">
+                <!-- Games will be populated here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-light py-4 mt-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <p class="mb-0">
+            <i class="fab fa-twitch text-primary me-2"></i>
+            Powered by Twitch API
+          </p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <small class="text-muted">
+            &copy; 2024 Twitch Games Dashboard - Data refreshes every 10 minutes
+          </small>
+        </div>
+      </div>
+    </div>
   </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./dist/bundle.js"></script>
 </body>
 </html>
